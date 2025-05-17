@@ -1,0 +1,26 @@
+Training MLP...
+Epoch 1, Loss: 1.638, Accuracy: 41.79%
+Epoch 2, Loss: 1.428, Accuracy: 49.62%
+Epoch 3, Loss: 1.319, Accuracy: 53.48%
+Epoch 4, Loss: 1.226, Accuracy: 56.60%
+Epoch 5, Loss: 1.144, Accuracy: 59.49%
+Epoch 6, Loss: 1.068, Accuracy: 62.02%
+Epoch 7, Loss: 0.992, Accuracy: 64.59%
+Epoch 8, Loss: 0.920, Accuracy: 67.35%
+Epoch 9, Loss: 0.856, Accuracy: 69.55%
+Epoch 10, Loss: 0.784, Accuracy: 72.00%
+
+Training CNN...
+Epoch 1, Loss: 1.324, Accuracy: 52.49%
+Epoch 2, Loss: 0.908, Accuracy: 67.90%
+Epoch 3, Loss: 0.705, Accuracy: 75.18%
+Epoch 4, Loss: 0.549, Accuracy: 80.70%
+Epoch 5, Loss: 0.397, Accuracy: 85.96%
+Epoch 6, Loss: 0.264, Accuracy: 90.90%
+Epoch 7, Loss: 0.164, Accuracy: 94.30%
+Epoch 8, Loss: 0.112, Accuracy: 96.21%
+Epoch 9, Loss: 0.087, Accuracy: 97.04%
+Epoch 10, Loss: 0.076, Accuracy: 97.42%
+
+MLP Test Accuracy: 52.56%
+CNN Test Accuracy: 73.66%
