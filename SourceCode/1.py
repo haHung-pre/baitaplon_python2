@@ -19,18 +19,21 @@ transform = transforms.Compose([
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
 
-trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                      download=True, transform=transform)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=64,
-                                        shuffle=True, num_workers=2)
+# Load CIFAR-10 dataset
+trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 
-testset = torchvision.datasets.CIFAR10(root='./data', train=False,
-                                     download=True, transform=transform)
-testloader = torch.utils.data.DataLoader(testset, batch_size=64,
-                                       shuffle=False, num_workers=2)
+# Split training set into training (40,000) and validation (10,000)
+train_size = int(0.8 * len(trainset))  # 80% for training
+val_size = len(trainset) - train_size  # 20% for validation
+train_dataset, val_dataset = torch.utils.data.random_split(trainset, [train_size, val_size])
 
-classes = ('plane', 'car', 'bird', 'cat', 'deer',
-          'dog', 'frog', 'horse', 'ship', 'truck')
+# Create DataLoaders
+trainloader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=2)
+valloader = torch.utils.data.DataLoader(val_dataset, batch_size=64, shuffle=False, num_workers=2)
+testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=False, num_workers=2)
+
+classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
 # MLP Model
 class MLP(nn.Module):
@@ -75,39 +78,61 @@ class CNN(nn.Module):
         x = self.fc_layers(x)
         return x
 
-# Training function
-def train_model(model, trainloader, criterion, optimizer, num_epochs=10):
-    train_losses = []
-    train_accuracies = []
+# Training function with validation
+def train_model(model, trainloader, valloader, criterion, optimizer, num_epochs=10):
+    train_losses, val_losses = [], []
+    train_accuracies, val_accuracies = [], []
     
     for epoch in range(num_epochs):
+        # Training phase
         model.train()
-        running_loss = 0.0
-        correct = 0
-        total = 0
+        running_train_loss = 0.0
+        correct_train = 0
+        total_train = 0
         
         for inputs, labels in trainloader:
             inputs, labels = inputs.to(device), labels.to(device)
-            
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
             
-            running_loss += loss.item()
+            running_train_loss += loss.item()
             _, predicted = torch.max(outputs.data, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
+            total_train += labels.size(0)
+            correct_train += (predicted == labels).sum().item()
         
-        epoch_loss = running_loss / len(trainloader)
-        epoch_acc = 100 * correct / total
-        train_losses.append(epoch_loss)
-        train_accuracies.append(epoch_acc)
+        epoch_train_loss = running_train_loss / len(trainloader)
+        epoch_train_acc = 100 * correct_train / total_train
         
-        print(f'Epoch {epoch+1}, Loss: {epoch_loss:.3f}, Accuracy: {epoch_acc:.2f}%')
+        # Validation phase
+        model.eval()
+        running_val_loss = 0.0
+        correct_val = 0
+        total_val = 0
+        
+        with torch.no_grad():
+            for inputs, labels in valloader:
+                inputs, labels = inputs.to(device), labels.to(device)
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
+                running_val_loss += loss.item()
+                _, predicted = torch.max(outputs.data, 1)
+                total_val += labels.size(0)
+                correct_val += (predicted == labels).sum().item()
+        
+        epoch_val_loss = running_val_loss / len(valloader)
+        epoch_val_acc = 100 * correct_val / total_val
+        
+        train_losses.append(epoch_train_loss)
+        val_losses.append(epoch_val_loss)
+        train_accuracies.append(epoch_train_acc)
+        val_accuracies.append(epoch_val_acc)
+        
+        print(f'Epoch {epoch+1}, Train Loss: {epoch_train_loss:.3f}, Train Acc: {epoch_train_acc:.2f}%, Val Loss: {epoch_val_loss:.3f}, Val Acc: {epoch_val_acc:.2f}%')
     
-    return train_losses, train_accuracies
+    return train_losses, val_losses, train_accuracies, val_accuracies
 
 # Evaluation function
 def evaluate_model(model, testloader):
@@ -124,7 +149,6 @@ def evaluate_model(model, testloader):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
-            
             all_preds.extend(predicted.cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
     
@@ -132,21 +156,25 @@ def evaluate_model(model, testloader):
     return accuracy, all_preds, all_labels
 
 # Plot learning curves
-def plot_learning_curves(mlp_losses, mlp_accs, cnn_losses, cnn_accs):
+def plot_learning_curves(mlp_losses, mlp_val_losses, mlp_accs, mlp_val_accs, cnn_losses, cnn_val_losses, cnn_accs, cnn_val_accs):
     plt.figure(figsize=(12, 4))
     
     plt.subplot(1, 2, 1)
-    plt.plot(mlp_losses, label='MLP Loss')
-    plt.plot(cnn_losses, label='CNN Loss')
-    plt.title('Training Loss')
+    plt.plot(mlp_losses, label='MLP Train Loss')
+    plt.plot(mlp_val_losses, label='MLP Val Loss', linestyle='--')
+    plt.plot(cnn_losses, label='CNN Train Loss')
+    plt.plot(cnn_val_losses, label='CNN Val Loss', linestyle='--')
+    plt.title('Training and Validation Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.legend()
     
     plt.subplot(1, 2, 2)
-    plt.plot(mlp_accs, label='MLP Accuracy')
-    plt.plot(cnn_accs, label='CNN Accuracy')
-    plt.title('Training Accuracy')
+    plt.plot(mlp_accs, label='MLP Train Accuracy')
+    plt.plot(mlp_val_accs, label='MLP Val Accuracy', linestyle='--')
+    plt.plot(cnn_accs, label='CNN Train Accuracy')
+    plt.plot(cnn_val_accs, label='CNN Val Accuracy', linestyle='--')
+    plt.title('Training and Validation Accuracy')
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy (%)')
     plt.legend()
@@ -179,10 +207,10 @@ def main():
     
     # Train models
     print("Training MLP...")
-    mlp_losses, mlp_accs = train_model(mlp, trainloader, criterion, mlp_optimizer)
+    mlp_losses, mlp_val_losses, mlp_accs, mlp_val_accs = train_model(mlp, trainloader, valloader, criterion, mlp_optimizer)
     
     print("\nTraining CNN...")
-    cnn_losses, cnn_accs = train_model(cnn, trainloader, criterion, cnn_optimizer)
+    cnn_losses, cnn_val_losses, cnn_accs, cnn_val_accs = train_model(cnn, trainloader, valloader, criterion, cnn_optimizer)
     
     # Evaluate models
     mlp_accuracy, mlp_preds, mlp_labels = evaluate_model(mlp, testloader)
@@ -192,7 +220,7 @@ def main():
     print(f'CNN Test Accuracy: {cnn_accuracy:.2f}%')
     
     # Plot results
-    plot_learning_curves(mlp_losses, mlp_accs, cnn_losses, cnn_accs)
+    plot_learning_curves(mlp_losses, mlp_val_losses, mlp_accs, mlp_val_accs, cnn_losses, cnn_val_losses, cnn_accs, cnn_val_accs)
     plot_confusion_matrix(mlp_labels, mlp_preds, 'MLP Confusion Matrix', 'mlp_confusion_matrix.png')
     plot_confusion_matrix(cnn_labels, cnn_preds, 'CNN Confusion Matrix', 'cnn_confusion_matrix.png')
 
