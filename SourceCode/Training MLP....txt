@@ -1,26 +1,26 @@
 Training MLP...
-Epoch 1, Loss: 1.638, Accuracy: 41.79%
-Epoch 2, Loss: 1.428, Accuracy: 49.62%
-Epoch 3, Loss: 1.319, Accuracy: 53.48%
-Epoch 4, Loss: 1.226, Accuracy: 56.60%
-Epoch 5, Loss: 1.144, Accuracy: 59.49%
-Epoch 6, Loss: 1.068, Accuracy: 62.02%
-Epoch 7, Loss: 0.992, Accuracy: 64.59%
-Epoch 8, Loss: 0.920, Accuracy: 67.35%
-Epoch 9, Loss: 0.856, Accuracy: 69.55%
-Epoch 10, Loss: 0.784, Accuracy: 72.00%
+Epoch 1, Train Loss: 1.660, Train Acc: 41.23%, Val Loss: 1.529, Val Acc: 45.78%
+Epoch 2, Train Loss: 1.449, Train Acc: 48.76%, Val Loss: 1.477, Val Acc: 48.37%
+Epoch 3, Train Loss: 1.341, Train Acc: 52.63%, Val Loss: 1.417, Val Acc: 50.18%
+Epoch 4, Train Loss: 1.241, Train Acc: 56.16%, Val Loss: 1.444, Val Acc: 49.70%
+Epoch 5, Train Loss: 1.154, Train Acc: 58.98%, Val Loss: 1.411, Val Acc: 52.36%
+Epoch 6, Train Loss: 1.071, Train Acc: 62.16%, Val Loss: 1.432, Val Acc: 51.76%
+Epoch 7, Train Loss: 0.993, Train Acc: 64.69%, Val Loss: 1.455, Val Acc: 51.50%
+Epoch 8, Train Loss: 0.906, Train Acc: 67.68%, Val Loss: 1.506, Val Acc: 52.61%
+Epoch 9, Train Loss: 0.833, Train Acc: 70.06%, Val Loss: 1.542, Val Acc: 51.44%
+Epoch 10, Train Loss: 0.761, Train Acc: 72.83%, Val Loss: 1.643, Val Acc: 51.40%
 
 Training CNN...
-Epoch 1, Loss: 1.324, Accuracy: 52.49%
-Epoch 2, Loss: 0.908, Accuracy: 67.90%
-Epoch 3, Loss: 0.705, Accuracy: 75.18%
-Epoch 4, Loss: 0.549, Accuracy: 80.70%
-Epoch 5, Loss: 0.397, Accuracy: 85.96%
-Epoch 6, Loss: 0.264, Accuracy: 90.90%
-Epoch 7, Loss: 0.164, Accuracy: 94.30%
-Epoch 8, Loss: 0.112, Accuracy: 96.21%
-Epoch 9, Loss: 0.087, Accuracy: 97.04%
-Epoch 10, Loss: 0.076, Accuracy: 97.42%
+Epoch 1, Train Loss: 1.416, Train Acc: 48.68%, Val Loss: 1.141, Val Acc: 59.07%
+Epoch 2, Train Loss: 1.014, Train Acc: 63.97%, Val Loss: 0.938, Val Acc: 66.89%
+Epoch 3, Train Loss: 0.799, Train Acc: 71.69%, Val Loss: 0.832, Val Acc: 70.37%
+Epoch 4, Train Loss: 0.630, Train Acc: 77.72%, Val Loss: 0.791, Val Acc: 72.70%
+Epoch 5, Train Loss: 0.468, Train Acc: 83.69%, Val Loss: 0.838, Val Acc: 72.28%
+Epoch 6, Train Loss: 0.318, Train Acc: 89.03%, Val Loss: 0.887, Val Acc: 73.42%
+Epoch 7, Train Loss: 0.195, Train Acc: 93.32%, Val Loss: 1.031, Val Acc: 73.10%
+Epoch 8, Train Loss: 0.127, Train Acc: 95.69%, Val Loss: 1.163, Val Acc: 72.70%
+Epoch 9, Train Loss: 0.088, Train Acc: 97.07%, Val Loss: 1.392, Val Acc: 73.22%
+Epoch 10, Train Loss: 0.081, Train Acc: 97.28%, Val Loss: 1.483, Val Acc: 72.08%
 
-MLP Test Accuracy: 52.56%
-CNN Test Accuracy: 73.66%
+MLP Test Accuracy: 52.03%
+CNN Test Accuracy: 71.03%
